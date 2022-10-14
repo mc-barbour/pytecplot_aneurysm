@@ -196,7 +196,7 @@ def NeckFlowInterpolate(Pt):
 				EQUATION = '{vdotN} = {X Velocity}*{X Grid K Unit Normal} + {Y Velocity}*{Y Grid K Unit Normal} + {Z Velocity}*{Z Grid K Unit Normal}'
 			''')
 
-        frame =tecplot.active_frame()
+        frame = tecplot.active_frame()
 
         variables_to_save = [frame.dataset.variable(V)
 				     for V in ['X','Y','Z','X Velocity','Y Velocity','Z Velocity','Cell Volume','vdotN']]
@@ -279,7 +279,6 @@ def NeckWSSCompute(Pt):
     if not surface_save_dir.exists():
         surface_save_dir.mkdir()
     
-
 		
     vdotnMax = np.array([])
 

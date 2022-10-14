@@ -8,30 +8,51 @@ Created on Tue Oct 11 13:49:39 2022
 
 class Parameters():
     
-    def __init__(self,datafiles, case, patient_id, processing_boolean, zones, surface_files, surface_names, parent_dir):
+    def __init__(self,datafiles, case, patient_number, sim_type, processing_boolean, zone_ids, surface_files, zone_names, parent_dir):
         
         self.datafiles = datafiles
         self.case = case
-        self.id = patient_id
+        self.id = patient_number
+        self.sim_type = sim_type
         self.parent_dir = parent_dir
+        self.post_process_dir = self.parent_dir / 'post_process' / self.sim_type
+        
+        
+        if (len(datafiles) == 0 or len(case) == 0):
+            raise ValueError("No data files found. Please check defined file locations and working directory")
+
+        
+        if not (self.parent_dir / 'post_process').exists():
+            (self.parent_dir / 'post_process').mkdir()
+            self.post_process_dir.mkdir()
+        
+        if not self.post_process_dir.exists():
+            self.post_process_dir.mkdir()
+            
         
         self.AneurysmAvgVel = processing_boolean['AneurysmAvgVel']
         self.AneurysmWSS = processing_boolean['AneurysmWSS']
         self.NeckWSS = processing_boolean['NeckWSS']
         self.AneurysmEps = processing_boolean['AneurysmEps']
         self.NeckFlow = processing_boolean['NeckFlow']
-        self.InletFlowrate = processing_boolean['InletFlowRate']
+        self.SummarizeNeckMetrics = processing_boolean["SummarizeNeckMetrics"]
 
 
-        self.pv_vol = zones['pv_vol']
-        self.pv_surf = zones['pv_surf']
-        self.an_vol = zones['an_vol']
-        self.an_surf = zones['an_surf']
-        self.inlet = zones['inlet']
-        
+        self.pv_vol = zone_ids['pv_vol']
+        self.pv_surf = zone_ids['pv_surf']
+        self.an_vol = zone_ids['an_vol']
+        self.an_surf = zone_ids['an_surf']
+
         if self.NeckWSS or self.NeckFlow:
-            self.neckfile = surface_files['neck']
-            self.neck_zone_name = surface_names['neck_name']
+            
+            if len(surface_files['neck']) == 0:
+                raise ValueError("No neck file found. Check file location")
+            else:
+                self.neckfile = surface_files['neck']
+                self.neck_zone_name = zone_names['neck']
+        
+        self.aneurysm_zone_name = zone_names['aneurysm']
+        self.pv_zone_name = zone_names['pv']
         
         # self.velfile = surface_files['velocity']
         # self.vel_surf = surface_files['vel_name']
