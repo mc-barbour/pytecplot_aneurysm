@@ -128,7 +128,7 @@ def Integrate_Scalar(IntZone, OutFile):
 	 ''')
 
     data = np.genfromtxt(OutFile,skip_header=1,skip_footer=1,usecols=2)
-    print (OutFile, "Sys: ", max(data), "TA: ", np.mean(data))
+    # print (OutFile, "Sys: ", max(data), "TA: ", np.mean(data))
     return data
 
 def Compute_Average(IntZone,OutFile):
@@ -146,7 +146,9 @@ def Compute_Average(IntZone,OutFile):
 	 ''')
 
     data = np.genfromtxt(OutFile,skip_header=1,skip_footer=1,usecols=2)
-    print (OutFile, "Sys: ", max(data), "TA: ", np.mean(data))
+    # print(data)
+    # if len(data) >= 1:
+    #     print (OutFile, "Sys: ", max(data), "TA: ", np.mean(data))
     return data
 
 
@@ -168,6 +170,7 @@ def Integrate_Area(IntZone,OutFile):
     data = np.genfromtxt(OutFile,skip_header=1,skip_footer=1,usecols=2)
     print (OutFile, "Sys: ", max(data), "TA: ", np.mean(data))
     return data	
+
 
 def Area_Compute(zoneid, OutFile):
 

@@ -222,18 +222,32 @@ def summarize_neck_metrics(Pt, flowrate_delta_tol = 1):
     # if [a > flowrate_delta_tol for a in abs(Flow - Flown)]:
     #     raise ValueError("Flow rate in does not match flow rate out: check definitions")
 
-    Narea = Area_Compute(1, "TotalNeckArea.txt")
+    Narea = Area_Compute(0, "TotalNeckArea.txt")
     dArea = {'Aneurysm Flow Area (m2)': Narea}
     
-    dSys = {"Sys. Neck WSS": max(NeckPlaneWSS),
-            "Sys. Neck WSSG (Pa/m)": max(NeckPlaneWSSG),
-            "Sys. Aneurysm Flow Rate (mL/min)": max(Flow),
-	}
-
-    dTA = {"TA Neck WSS (Pa)": np.mean(NeckPlaneWSS),
-           "TA Neck WSSG (Pa/m)": np.mean(NeckPlaneWSSG),
-           "TA Aneurysm Flow Rate (mL/min)": np.mean(Flow),
-	}
+    if NeckPlaneWSS.size == 1:
+        print("Warning: only one scalar value / neck being processed")
+        dSys = {"Sys. Neck WSS": NeckPlaneWSS,
+                "Sys. Neck WSSG (Pa/m)": NeckPlaneWSSG,
+                "Sys. Aneurysm Flow Rate (mL/min)": Flow,
+    	}
+        
+    else:
+        print("Finding max values of {:g}".format(NeckPlaneWSS.size))
+        dSys = {"Sys. Neck WSS": max(NeckPlaneWSS),
+                "Sys. Neck WSSG (Pa/m)": max(NeckPlaneWSSG),
+                "Sys. Aneurysm Flow Rate (mL/min)": max(Flow),
+                }   
+    if Pt.TimeAverage:
+        dTA = {"TA Neck WSS (Pa)": np.mean(NeckPlaneWSS),
+               "TA Neck WSSG (Pa/m)": np.mean(NeckPlaneWSSG),
+               "TA Aneurysm Flow Rate (mL/min)": np.mean(Flow),
+    	}
+    else:
+        dTA = {"TA Neck WSS (Pa)": 0,
+               "TA Neck WSSG (Pa/m)": 0,
+               "TA Aneurysm Flow Rate (mL/min)":0,
+    	}
 
     return dSys, dTA
             

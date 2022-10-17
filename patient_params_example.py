@@ -1,10 +1,9 @@
 # -*- coding: utf-8 -*-
 """
-Created on Fri Oct 14 10:20:10 2022
+Created on Thu Oct 13 15:17:04 2022
 
 @author: barbourm
 """
-
 
 import os
 import glob
@@ -15,7 +14,7 @@ from patient_processing_main import process
 
 # save_dir = os.getcwd()
 parent_dir = Path.cwd()
-patient_number = 'S114'
+patient_number = 'S115'
 simulation_type = 'simplePM_coilWrappedNeck'
 
 
@@ -26,7 +25,8 @@ processing_boolean = {"AneurysmAvgVel": False,
 		              'NeckWSS':        True,
 		              'AneurysmEps':    False, 	
 		              'NeckFlow':       True,
-                      'SummarizeNeckMetrics': False
+                      'SummarizeNeckMetrics': True,
+                      "TimeAverage":      False
                       }
 
 # Specify tecplot zone numbers
@@ -39,18 +39,18 @@ zones = {'an_vol'  :[0],
          }
 
 # Specify data and case file locations
-datafiles = sorted(glob.glob("simplePM_datafiles/*.dat.h5"))
-Case = sorted(glob.glob("simplePM_datafiles/s114_coilWrappedNeck_simplePM-2.cas.h5"))
+datafiles = sorted(glob.glob("simplePM_datafiles/*.dat.h5"))[2:4]
+Case = sorted(glob.glob("simplePM_datafiles/S115_coilWrapNeck_simplePM-4.cas.h5"))
 
 neckfile = glob.glob("neck.dat")
 
 neck_surf_name = 'neck'
 aneurysm_vol_name = 'aneu'
-pv_vol_name = 'pv-2'
+pv_vol_name = 'pv2'
 
 
 #----------------------------------------------------------------------
-# Create dictionaries for passing to processing script - don't modify
+# Create dictionaries for passing to processing script - don't modify anything below here
 surface_files = {'neck'     : neckfile,
                  }
 

@@ -54,7 +54,9 @@ def process(Pt):
     TAOutFile = Pt.post_process_dir / (Pt.id + "_" + Pt.sim_type +"_TAData.csv")
     
     save_metrics(dataSys, SysOutFile)
-    save_metrics(dataSys, TAOutFile)
+    
+    if Pt.TimeAverage:
+        save_metrics(dataTA, TAOutFile)
 
 if __name__ == '__main__':
     process(Pt)

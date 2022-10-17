@@ -36,6 +36,7 @@ class Parameters():
         self.AneurysmEps = processing_boolean['AneurysmEps']
         self.NeckFlow = processing_boolean['NeckFlow']
         self.SummarizeNeckMetrics = processing_boolean["SummarizeNeckMetrics"]
+        self.TimeAverage = processing_boolean['TimeAverage']
 
 
         self.pv_vol = zone_ids['pv_vol']
