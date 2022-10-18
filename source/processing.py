@@ -56,7 +56,7 @@ def compute_neck_flow(Pt, count):
     destintion = frame.dataset.zone(Pt.neck_zone_name)
     source = [frame.dataset.zone(Pt.aneurysm_zone_name),frame.dataset.zone(Pt.pv_zone_name)]
     variables_to_interp = [frame.dataset.variable(V)
-     for V in ('X Velocity','Y Velocity','Z Velocity')]
+                           for V in ('X Velocity','Y Velocity','Z Velocity')]
 
     tecplot.data.operate.interpolate_inverse_distance(destination_zone=destintion,source_zones=source,variables=variables_to_interp)
     
@@ -65,7 +65,7 @@ def compute_neck_flow(Pt, count):
         vdotN()
 
     variables_to_save = [frame.dataset.variable(V)
-    for V in ['X','Y','Z','X Velocity','Y Velocity','Z Velocity','Cell Volume','vdotN']]
+                         for V in ['X','Y','Z','X Velocity','Y Velocity','Z Velocity','Cell Volume','vdotN']]
     
     outfile = surface_save_dir / ("NeckQ_"+str(count).zfill(3)+".dat")
     
@@ -116,26 +116,25 @@ def compute_neck_WSS(Pt, count):
         surface_save_dir.mkdir()
     
     if not ('s11'  in frame.dataset.variable_names):
-        print('computing strain rate tensor...')
+        print('Computing strain rate tensor...')
         strain_rate_tensor()
     else:
-        print('viscous tensor already computed.')
+        print('Viscous tensor already computed.')
 
     tecplot.data.load_tecplot(Pt.neckfile)
 
-    destintion = frame.dataset.zone(Pt.neck_zone_name)
-    source = [frame.dataset.zone(Pt.an_vol[0]),frame.dataset.zone(Pt.pv_vol[0])]		
+    neck_zone = frame.dataset.zone(Pt.neck_zone_name)
+    source = [frame.dataset.zone(Pt.aneurysm_zone_name),frame.dataset.zone(Pt.pv_zone_name)]		
     variables_to_interp = [frame.dataset.variable(V)
-    for V in ('X Velocity','Y Velocity','Z Velocity','s11','s12','s13','s22','s23','s33')]
-
-    tecplot.data.operate.interpolate_inverse_distance(destination_zone=destintion,source_zones=source,variables=variables_to_interp)
+                           for V in ('X Velocity','Y Velocity','Z Velocity','s11','s12','s13','s22','s23','s33')]
+    print('interpotatling')
+    tecplot.data.operate.interpolate_inverse_distance(destination_zone=neck_zone,source_zones=source,variables=variables_to_interp)
 
     # Execute neck shear metric
-    neck_shear()
+    neck_shear(zoneid = neck_zone.index)
 
-    print('saving')
     variables_to_save = [frame.dataset.variable(V)
-    for V in ('X','Y','Z','X Velocity','Y Velocity','Z Velocity','s11','s12','s13','s22','s23','s33','vdotN','Tx','Ty','Tz','Tw','WSSG')]
+                         for V in ('X','Y','Z','X Velocity','Y Velocity','Z Velocity','s11','s12','s13','s22','s23','s33','vdotN','Tx','Ty','Tz','Tw','WSSG')]
     
     outfile = surface_save_dir / ("NeckWSS_"+str(count).zfill(3)+".dat")
     zone_to_save = frame.dataset.zone(Pt.neck_zone_name)
@@ -143,12 +142,12 @@ def compute_neck_WSS(Pt, count):
                                     variables=variables_to_save,
                                     zones=[zone_to_save])
             
-    print ("finished neck #" , count+1)
+    print ("Finished neck #" , count+1)
 
 def perform_tecplot_analysis(Pt):
     
     
-    for i in range(len(Pt.datafiles)):
+    for i in range(Pt.datafile_start_num, len(Pt.datafiles)):
         
         print('Analyzing data file: {:s}'.format(Pt.datafiles[i]))
         
@@ -163,11 +162,13 @@ def perform_tecplot_analysis(Pt):
             
         frame = tecplot.active_frame()
         frame.plot_type = tecplot.constant.PlotType.Cartesian3D
+        
+        
 
         # delete everythin except aneurysm and pv next to aneurysm
-        zone_ids = list(np.arange(frame.dataset.num_zones))
-        zone_ids.remove(Pt.an_vol[0])
-        zone_ids.remove(Pt.pv_vol[0])
+        # zone_ids = list(np.arange(frame.dataset.num_zones))
+        # zone_ids.remove(Pt.an_vol[0])
+        # zone_ids.remove(Pt.pv_vol[0])
         # delete_zones = [frame.dataset.zone(a) for a in zone_ids]
         # frame.dataset.delete_zones(delete_zones) 
 

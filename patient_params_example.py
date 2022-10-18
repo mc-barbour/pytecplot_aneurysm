@@ -26,7 +26,7 @@ processing_boolean = {"AneurysmAvgVel": False,
 		              'AneurysmEps':    False, 	
 		              'NeckFlow':       True,
                       'SummarizeNeckMetrics': True,
-                      "TimeAverage":      False
+                      "TimeAverage":      True
                       }
 
 # Specify tecplot zone numbers
@@ -39,8 +39,9 @@ zones = {'an_vol'  :[0],
          }
 
 # Specify data and case file locations
-datafiles = sorted(glob.glob("simplePM_datafiles/*.dat.h5"))[2:4]
+datafiles = sorted(glob.glob("simplePM_datafiles/*.dat.h5"))
 Case = sorted(glob.glob("simplePM_datafiles/S115_coilWrapNeck_simplePM-4.cas.h5"))
+process_start_number = 12 # typically 0 unless restarting
 
 neckfile = glob.glob("neck.dat")
 
@@ -59,5 +60,5 @@ zone_names = {'neck'    :  neck_surf_name,
               'pv'      :  pv_vol_name
                  }
 
-Pt = Parameters(datafiles, Case, patient_number, simulation_type, processing_boolean, zones, surface_files, zone_names, parent_dir)
+Pt = Parameters(datafiles, Case, patient_number, simulation_type, processing_boolean, zones, surface_files, zone_names, parent_dir, process_start_number)
 process(Pt)

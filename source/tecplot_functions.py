@@ -22,7 +22,9 @@ def vdotN():
 	  		  Command = 'Calculate Function=\'CELLVOLUME\' Normalization=\'None\' ValueLocation=\'Nodal\' CalculateOnDemand=\'F\' UseMorePointsForFEGradientCalculations=\'T\''
 			$!ALTERDATA 
 				EQUATION = '{vdotN} = {X Velocity}*{X Grid K Unit Normal} + {Y Velocity}*{Y Grid K Unit Normal} + {Z Velocity}*{Z Grid K Unit Normal}'
-			''')
+                DATATYPE = DOUBLE
+                
+                ''')
 
 def strain_rate_tensor(viscosity = 0.0035):
     tecplot.macro.execute_command(r'''
@@ -30,62 +32,92 @@ def strain_rate_tensor(viscosity = 0.0035):
             $!ExtendedCommand 
               CommandProcessorID = 'CFDAnalyzer4'
               Command = 'Calculate Function=\'VELOCITYGRADIENT\' Normalization=\'None\' ValueLocation=\'Nodal\' CalculateOnDemand=\'F\' UseMorePointsForFEGradientCalculations=\'T\''
-			$!ALTERDATA EQUATION = '{s11} = {dUdX}'
-			$!ALTERDATA EQUATION = '{s12} = 0.5*({dUdY}+{dVdX})'
-			$!ALTERDATA EQUATION = '{s13} = 0.5*({dUdZ}+{dWdX})'
-			$!ALTERDATA EQUATION = '{s22} = {dVdY}'
-			$!ALTERDATA EQUATION = '{s23} = 0.5*({dVdZ}+{dWdY})'
-			$!ALTERDATA EQUATION = '{s33} = {dWdZ}'
-            $!ALTERDATA EQUATION = '{epsilon_temp} = 2*({s12}**2 + {s13}**2 + {s23}**2) + {s11}**2 + {s22}**2 + {s33}**2 '	
-            $!ALTERDATA EQUATION = '{epsilon} = 2 * ''' + str(viscosity) + r'''* {epsilon_temp} '
+			
+            $!ALTERDATA 
+                EQUATION = '{s11} = {dUdX}'
+                DATATYPE = DOUBLE
+                
+			$!ALTERDATA 
+                EQUATION = '{s12} = 0.5*({dUdY}+{dVdX})'
+                DATATYPE = DOUBLE
+                
+			$!ALTERDATA 
+                EQUATION = '{s13} = 0.5*({dUdZ}+{dWdX})'
+                DATATYPE = DOUBLE
+                
+			$!ALTERDATA 
+                EQUATION = '{s22} = {dVdY}'
+                DATATYPE = DOUBLE
+                
+			$!ALTERDATA 
+                EQUATION = '{s23} = 0.5*({dVdZ}+{dWdY})'
+                DATATYPE = DOUBLE
+                
+			$!ALTERDATA 
+                EQUATION = '{s33} = {dWdZ}'
+                DATATYPE = DOUBLE
+                
+            $!ALTERDATA 
+                EQUATION = '{epsilon_temp} = 2*({s12}**2 + {s13}**2 + {s23}**2) + {s11}**2 + {s22}**2 + {s33}**2 '	
+                DATATYPE = DOUBLE
+                
+            $!ALTERDATA 
+                EQUATION = '{epsilon} = 2 * ''' + str(viscosity) + r'''* {epsilon_temp} '
+                DATATYPE = DOUBLE
             
-            # '{epsilon} = 2 * ''' + str(viscosity) + r'''* (2 * ({s12}**2 + {s13}**2 + {s23}**2) + {s11}**2 + {s22}**2 + {s33}**2) '	
-
 			''')
             
-def neck_shear():
+def neck_shear(zoneid):
     print("Computing neck shear")
     tecplot.macro.execute_command(r'''
-# 			$!DELETEZONES [1,2]
+
 
 			$!EXTENDEDCOMMAND 
 	  		  COMMANDPROCESSORID = 'CFDAnalyzer4'
 	  		  COMMAND = 'Calculate Function=\'GRIDKUNITNORMAL\' Normalization=\'None\' ValueLocation=\'Nodal\' CalculateOnDemand=\'F\' UseMorePointsForFEGradientCalculations=\'T\''
 
-	  		$!ALTERDATA 
+	  		$!ALTERDATA ['''+str(zoneid+1)+r''']
 				EQUATION = '{vdotN} = {X Velocity}*{X Grid K Unit Normal} + {Y Velocity}*{Y Grid K Unit Normal} + {Z Velocity}*{Z Grid K Unit Normal}'
-			
-			$!ALTERDATA
+                DATATYPE = DOUBLE
+                
+            $!ALTERDATA ['''+str(zoneid+1)+r''']
 			    EQUATION = '{Sx} = ({s11}*{X Grid K Unit Normal} + {s12}*{Y Grid K Unit Normal} + {s13}*{Z Grid K Unit Normal})'
-
-			$!ALTERDATA
+                DATATYPE = DOUBLE
+                
+			$!ALTERDATA ['''+str(zoneid+1)+r''']
 			    EQUATION = '{Sy} = ({s12}*{X Grid K Unit Normal} + {s22}*{Y Grid K Unit Normal} + {s23}*{Z Grid K Unit Normal})'
-
-			$!ALTERDATA
+                DATATYPE = DOUBLE
+                
+			$!ALTERDATA ['''+str(zoneid+1)+r''']
 			    EQUATION = '{Sz} = ({s13}*{X Grid K Unit Normal} + {s23}*{Y Grid K Unit Normal} + {s33}*{Z Grid K Unit Normal})'
+                DATATYPE = DOUBLE
 
-
-			$!ALTERDATA
+			$!ALTERDATA ['''+str(zoneid+1)+r''']
 			    EQUATION = '{Sigma} = ({Sx}*{X Grid K Unit Normal} + {Sy}*{Y Grid K Unit Normal} + {Sz}*{Z Grid K Unit Normal})'
+                DATATYPE = DOUBLE
 
-
-			$!ALTERDATA
+			$!ALTERDATA ['''+str(zoneid+1)+r''']
 				EQUATION = '{Tx} = ({Sx} - {Sigma}*{X Grid K Unit Normal})'
-
-			$!ALTERDATA
+                DATATYPE = DOUBLE
+                
+			$!ALTERDATA ['''+str(zoneid+1)+r''']
 			    EQUATION = '{Ty} = ({Sy} - {Sigma}*{Y Grid K Unit Normal})'
-
-			$!ALTERDATA
+                DATATYPE = DOUBLE
+                
+			$!ALTERDATA ['''+str(zoneid+1)+r''']
 			    EQUATION = '{Tz} = ({Sz} - {Sigma}*{Z Grid K Unit Normal})'
+                DATATYPE = DOUBLE
 
-
-			$!ALTERDATA
+			$!ALTERDATA ['''+str(zoneid+1)+r''']
 			    EQUATION = '{Tw} = 0.0035*sqrt({Tx}*{Tx} + {Ty}*{Ty} + {Tz}*{Tz})'
+                DATATYPE = DOUBLE
 
-
-			$!ALTERDATA
+			$!ALTERDATA ['''+str(zoneid+1)+r''']
 			    EQUATION = '{WSSG} = 0.0035*sqrt((ddx({Tx}))**2 + (ddy({Ty}))**2 + (ddz({Tz}))**2)'  
-			''')
+                IGNOREDIVIDEBYZERO = YES
+                DATATYPE = DOUBLE
+            
+            ''')
 
 
 

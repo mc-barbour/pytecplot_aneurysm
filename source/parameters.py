@@ -8,7 +8,7 @@ Created on Tue Oct 11 13:49:39 2022
 
 class Parameters():
     
-    def __init__(self,datafiles, case, patient_number, sim_type, processing_boolean, zone_ids, surface_files, zone_names, parent_dir):
+    def __init__(self,datafiles, case, patient_number, sim_type, processing_boolean, zone_ids, surface_files, zone_names, parent_dir, datafile_start_num=0):
         
         self.datafiles = datafiles
         self.case = case
@@ -16,7 +16,7 @@ class Parameters():
         self.sim_type = sim_type
         self.parent_dir = parent_dir
         self.post_process_dir = self.parent_dir / 'post_process' / self.sim_type
-        
+        self.datafile_start_num = datafile_start_num
         
         if (len(datafiles) == 0 or len(case) == 0):
             raise ValueError("No data files found. Please check defined file locations and working directory")
