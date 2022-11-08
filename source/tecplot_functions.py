@@ -25,6 +25,36 @@ def vdotN():
                 DATATYPE = DOUBLE
                 
                 ''')
+                
+def velmag():
+    tecplot.macro.execute_command(r'''
+            $!EXTENDEDCOMMAND
+	  		  COMMANDPROCESSORID = 'CFDAnalyzer4'
+	  		  COMMAND = 'Calculate Function=\'VELOCITYMAG\' Normalization=\'None\' ValueLocation=\'Nodal\' CalculateOnDemand=\'T\' UseMorePointsForFEGradientCalculations=\'T\''
+            $!ALTERDATA
+    	      EQUATION = '{VelMag} = {Velocity Magnitude}'
+                ''')
+
+def domeWSS_h5():
+    tecplot.macro.execute_command(r'''
+            $!ALTERDATA
+              VALUELOCATION=NODAL
+              EQUATION = '{WSS (Pa)} = sqrt({Wall Shear Stress-1}**2 + {Wall Shear Stress-2}**2 + {Wall Shear Stress-3}**2)'
+            $!ALTERDATA
+              VALUELOCATION=NODAL
+              EQUATION = '{WSSG (Pa/m)} = sqrt((ddx({Wall Shear Stress-1}))**2 + (ddy({Wall Shear Stress-2}))**2 + (ddz({Wall Shear Stress-3}))**2)'
+                    ''')
+
+def domeWSS_old():
+    tecplot.macro.execute_command(r'''
+            $!ALTERDATA
+              VALUELOCATION=NODAL
+              EQUATION = '{WSS (Pa)} = sqrt({Wall Shear-1}**2 + {Wall Shear-2}**2 + {Wall Shear-3}**2)'
+            $!ALTERDATA
+              VALUELOCATION=NODAL
+              EQUATION = '{WSSG (Pa/m)} = sqrt((ddx({Wall Shear-1}))**2 + (ddy({Wall Shear-2}))**2 + (ddz({Wall Shear-3}))**2)'
+              
+              ''')
 
 def strain_rate_tensor(viscosity = 0.0035):
     tecplot.macro.execute_command(r'''
@@ -120,8 +150,6 @@ def neck_shear(zoneid):
             ''')
 
 
-
-  
 def integrate_scalar_singlezone(IntZone, scalar, OutFile):
     """
     Integrate a scalar across IntZone for all time points. Data is saved in Outfile
@@ -141,7 +169,26 @@ def integrate_scalar_singlezone(IntZone, scalar, OutFile):
     print (OutFile, "Sys: ", data )
     return data    
   
+
+def compute_average_singlezone(IntZone, scalar, OutFile):
+    """
+    Compute the average of a scalar across IntZones for all time points. Data is saved in Outfile
+    """
+    print(OutFile)
     
+    tecplot.macro.execute_command(r'''
+	$!EXTENDEDCOMMAND 
+	   COMMANDPROCESSORID = 'CFDAnalyzer4'
+	   COMMAND = 'Integrate '''+str(IntZone+1)+r''' VariableOption=\'Average\' ScalarVar='''+str(scalar+1)+r''' Absolute=\'T\' ExcludeBlanked=\'F\' XOrigin=0 YOrigin=0 ZOrigin=0 XVariable=1 YVariable=2 ZVariable=3 IntegrateOver=\'Cells\' IntegrateBy=\'Zones\' '
+	$!EXTENDEDCOMMAND
+	   COMMANDPROCESSORID = 'CFDAnalyzer4'
+	   COMMAND = 'SaveIntegrationResults FileName=\'''' + OutFile + r'''\' '
+
+	 ''')
+    
+    data = np.genfromtxt(OutFile,skip_header=1,skip_footer=1,usecols=2)
+    print (OutFile, "Sys: ", data )
+    return data   
 
 
 def Integrate_Scalar(IntZone, OutFile):

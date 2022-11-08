@@ -48,7 +48,10 @@ def process(Pt):
         Sys, TA = summarize_neck_metrics(Pt)
         dataSys.update(Sys)
         dataTA.update(TA)
-    
+    if Pt.SummarizeExcelMetrics:
+        Sys, TA = summarize_excel_metrics(Pt)
+        dataSys.update(Sys)
+        dataTA.update(TA)
 
     SysOutFile = Pt.post_process_dir / (Pt.id + "_" + Pt.sim_type + "_SysData.csv")
     TAOutFile = Pt.post_process_dir / (Pt.id + "_" + Pt.sim_type +"_TAData.csv")

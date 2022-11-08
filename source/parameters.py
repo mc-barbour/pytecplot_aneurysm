@@ -36,6 +36,7 @@ class Parameters():
         self.AneurysmEps = processing_boolean['AneurysmEps']
         self.NeckFlow = processing_boolean['NeckFlow']
         self.SummarizeNeckMetrics = processing_boolean["SummarizeNeckMetrics"]
+        self.SummarizeExcelMetrics = processing_boolean["SummarizeExcelMetrics"]
         self.TimeAverage = processing_boolean['TimeAverage']
 
 
@@ -54,6 +55,7 @@ class Parameters():
         
         self.aneurysm_zone_name = zone_names['aneurysm']
         self.pv_zone_name = zone_names['pv']
+        self.aneurysm_surf_name = zone_names['aneurysm-wall']
         
         # self.velfile = surface_files['velocity']
         # self.vel_surf = surface_files['vel_name']
