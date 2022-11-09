@@ -14,7 +14,7 @@ from patient_processing_main import process
 
 # save_dir = os.getcwd()
 parent_dir = Path.cwd()
-patient_number = 'S115'
+patient_number = 'S206'
 simulation_type = 'simplePM_coilWrappedNeck'
 
 
@@ -26,7 +26,9 @@ processing_boolean = {"AneurysmAvgVel": False,
 		              'AneurysmEps':    False, 	
 		              'NeckFlow':       True,
                       'SummarizeNeckMetrics': True,
+                      "SummarizeExcelMetrics": False,
                       "TimeAverage":      True
+                     
                       }
 
 # Specify tecplot zone numbers
@@ -40,14 +42,16 @@ zones = {'an_vol'  :[0],
 
 # Specify data and case file locations
 datafiles = sorted(glob.glob("simplePM_datafiles/*.dat.h5"))
-Case = sorted(glob.glob("simplePM_datafiles/S115_coilWrapNeck_simplePM-4.cas.h5"))
-process_start_number = 12 # typically 0 unless restarting
-
+Case = sorted(glob.glob("simplePM_datafiles/S206_simplePM_coilWrappedNeck-2.cas.h5"))
 neckfile = glob.glob("neck.dat")
 
-neck_surf_name = 'neck'
+
+process_start_number = 1 # typically 0 unless restarting
+
+neck_surf_name = 'interface-neck-2'
 aneurysm_vol_name = 'aneu'
 pv_vol_name = 'pv2'
+aneurysm_surf_name = 'aneu-2'
 
 
 #----------------------------------------------------------------------
@@ -57,7 +61,8 @@ surface_files = {'neck'     : neckfile,
 
 zone_names = {'neck'    :  neck_surf_name,
               'aneurysm':  aneurysm_vol_name,
-              'pv'      :  pv_vol_name
+              'pv'      :  pv_vol_name,
+              'aneurysm-wall': aneurysm_surf_name
                  }
 
 Pt = Parameters(datafiles, Case, patient_number, simulation_type, processing_boolean, zones, surface_files, zone_names, parent_dir, process_start_number)
